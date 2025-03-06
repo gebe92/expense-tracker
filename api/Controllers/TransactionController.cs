@@ -58,5 +58,43 @@ namespace api.Controllers
             await _transRepo.CreateAsync(transModel);
             return CreatedAtAction(nameof(GetById), new { id = transModel.transID }, transModel.GetTransDto());
         }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTransDto transDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var trans = await _transRepo.UpdateAsync(id, transDto);
+
+            if (trans == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(trans.GetTransDto());
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var trans = await _transRepo.DeleteAsync(id);
+
+            if (trans == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }
